@@ -1,7 +1,9 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+# SHARED: PACKAGES ENABLE REUSABLE FUNCTIONALITY
 from flask import Flask, render_template, request, redirect, url_for
 
+# UNIQUE: APPLICATION CONTEXT TRACKS USER INFORMATION
 app = Flask(__name__)
 app.app_context().push()
 
@@ -10,15 +12,16 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
     complete = db.Column(db.Boolean)
 
+# SHARED: ROUTES SUPPORT HTTP METHODS AND MAP URI TO FUNCTIONS
 @app.route("/")
 def home():
     todo_list = Todo.query.all()
+    # SHARED: TEMPLATE HTML FILES FOR RENDERING APPS
     return render_template("base.html", todo_list=todo_list)
 
 @app.route("/add", methods=["POST"])
@@ -43,6 +46,7 @@ def delete(todo_id):
     db.session.commit()
     return redirect(url_for("home"))
 
+# UNIQUE: OOP APPLICATION HAS A MAIN AND RUNTIME EXECUTABLE
 if __name__ == "__main__":
     db.create_all()
     app.run(debug=True)
